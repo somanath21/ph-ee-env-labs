@@ -204,8 +204,6 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
       tls:
         - secretName: sandbox-secret
       path: "/"
@@ -240,8 +238,6 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
       tls:
         - secretName: sandbox-secret
       path: "/"
@@ -298,8 +294,6 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
       tls:
         - secretName: sandbox-secret
       hosts:
@@ -344,8 +338,6 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
       path: "/"
       backend:
         service:
@@ -437,8 +429,6 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
       path: "/"
       backend:
         service:
@@ -472,7 +462,6 @@ ph-ee-engine:
       memory: "256M"
     ingress:
       enabled: true
-      className: "kong"
       annotations: 
         kubernetes.io/ingress.class: "kong"
         konghq.com/plugins: request-transformer,oidc,cors
@@ -507,8 +496,6 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
       path: "/"
       backend:
         service:
@@ -544,8 +531,6 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
       path: "/"
       backend:
         service:
