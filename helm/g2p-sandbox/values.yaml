@@ -313,7 +313,7 @@ ph-ee-engine:
           - path: "/"
             backend:
               service:
-                name: "ph-ee-connector-channel"
+                name: "ph-ee-connector-channel-gsma"
                 port:
                   number: 82
 
