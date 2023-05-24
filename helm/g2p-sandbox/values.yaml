@@ -301,16 +301,20 @@ ph-ee-engine:
         kubernetes.io/ingress.class: "nginx"
       tls:
         - secretName: sandbox-secret
-      path: "/"
-      backend:
-      - service:
-          name: ph-ee-connector-channel
-          port:
-            number: 80
-      - service:
-          name: ph-ee-connector-channel
-          port:
-            number: 82
+      paths: 
+      - path: "/"
+        backend:
+          service:
+            name: ph-ee-connector-channel
+            port:
+              number: 80
+      - path: "/"
+        backend:
+          service:
+            name: ph-ee-connector-channel
+            port:
+              number: 82
+
     deployment:
       annotations:
         deployTime: "{{ .Values.deployTime }}"
