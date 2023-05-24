@@ -302,8 +302,7 @@ ph-ee-engine:
       tls:
         - secretName: sandbox-secret
       hosts:
-        - host: channel.sandbox.fynarfin.io  
-        - host: channel-gsma.sandbox.fynarfin.io         
+        - host: channel.sandbox.fynarfin.io          
           paths: 
           - path: "/"
             backend:
