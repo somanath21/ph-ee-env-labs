@@ -463,7 +463,8 @@ ph-ee-engine:
       annotations: 
         konghq.com/plugins: request-transformer,oidc,cors
       tls:
-        - secretName: sandbox-secret
+      - hosts: "bulk-connector.sandbox.mifos.io"
+      - secretName: sandbox-secret
       path: "/"
       backend:
         service:
