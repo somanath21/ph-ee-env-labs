@@ -204,7 +204,6 @@ ph-ee-engine:
     ams_local_auth_host: "https://fynams.sandbox.fynarfin.io/"
     ingress:
       enabled: true
-      className: "nginx"
       annotations:
         kubernetes.io/ingress.class: "nginx"
       tls:
