@@ -526,12 +526,17 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      path: "/"
-      backend:
-        service:
-          name: ph-ee-zeebe-ops
-          port:
-            number: 80
+      tls:
+        - secretName: sandbox-secret
+      hosts:
+        - host: zeebeops.sandbox.fynarfin.io          
+          paths: 
+          - path: "/"
+            backend:
+              service:
+                name: "ph-ee-zeebe-ops"
+                port:
+                  number: 80            
     deployment:
       annotations:
         deployTime: "{{ .Values.deployTime }}"
