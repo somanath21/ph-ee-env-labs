@@ -543,12 +543,17 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      path: "/"
-      backend:
-        service:
-          name: message-gateway
-          port:
-            number: 80
+      tls:
+        - secretName: sandbox-secret
+      hosts:
+        - host: messagegateway.sandbox.fynarfin.io       
+          paths: 
+          - path: "/"
+            backend:
+              service:
+                name: "message-gateway"
+                port:
+                  number: 80            
 
   importer_es:
     image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/ph-es-importer"
