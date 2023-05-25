@@ -244,12 +244,15 @@ ph-ee-engine:
       className: "nginx"
       tls:
         - secretName: sandbox-secret
-      path: "/"
-      backend:
-        service:
-          name: ph-ee-connector-mojaloop-java
-          port:
-            number: 80
+      hosts:
+        - host: mojaloop.sandbox.fynarfin.io          
+          paths: 
+          - path: "/"
+            backend:
+              service:
+                name: ph-ee-connector-mojaloop-java
+                port:
+                  number: 80            
     deployment:
       annotations:
         deployTime: "{{ .Values.deployTime }}"
