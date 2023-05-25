@@ -353,6 +353,20 @@ ph-ee-engine:
           name: ph-ee-operations-app
           port:
             number: 80
+    ingress:
+      enabled: true
+      className: "nginx"
+      tls:
+        - secretName: sandbox-secret
+      hosts:
+        - host: ops-bk.sandbox.fynarfin.io          
+          paths: 
+          - path: "/"
+            backend:
+              service:
+                name: "ph-ee-operations-app"
+                port:
+                  number: 80            
     deployment:
       annotations:
         deployTime: "{{ .Values.deployTime }}"
