@@ -305,6 +305,8 @@ ph-ee-engine:
                 name: "ph-ee-connector-channel"
                 port:
                   number: 80
+        - host: channel-gsma.sandbox.fynarfin.io          
+          paths:          
           - path: "/"
             backend:
               service:
@@ -393,7 +395,6 @@ ph-ee-engine:
   ph_ee_connector_slcb:
     enabled: false
    
-
   mpesa:
     enabled: false
     
