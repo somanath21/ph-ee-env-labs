@@ -435,12 +435,17 @@ ph-ee-engine:
     ingress:
       enabled: true
       className: "nginx"
-      path: "/"
-      backend:
-        service:
-          name: ph-ee-connector-notifications
-          port:
-            number: 80
+      tls:
+        - secretName: sandbox-secret
+      hosts:
+        - host: notifications.sandbox.fynarfin.io         
+          paths: 
+          - path: "/"
+            backend:
+              service:
+                name: "ph-ee-connector-notifications"
+                port:
+                  number: 80            
     deployment:
       annotations:
         deployTime: "{{ .Values.deployTime }}"
