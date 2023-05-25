@@ -376,8 +376,7 @@ ph-ee-engine:
     image: "419830066942.dkr.ecr.ap-south-1.amazonaws.com/phee-ops-web"
     imageTag: latest
     SPRING_PROFILES_ACTIVE: "bb"
-    hostname: "ops.sandbox.fynarfin.io"
-    webhost: "ops.sandbox.fynarfin.io"
+    hostname: "ops-web.sandbox.fynarfin.io"
     limits:
       cpu: "500m"
       memory: "512M"
@@ -385,14 +384,19 @@ ph-ee-engine:
       cpu: "100m"
       memory: "256M"
     ingress:
-      className: "kong"
       enabled: true
-      path: "/"
-      backend:
-        service:
-          name: ph-ee-operations-web
-          port:
-            number: 4200
+      className: "kong"
+      tls:
+        - secretName: sandbox-secret
+      hosts:
+        - host: ops-web.sandbox.fynarfin.io          
+          paths: 
+          - path: "/"
+            backend:
+              service:
+                name: "ph-ee-operations-web"
+                port:
+                  number: 4200          
 
   identity:
     hostname: "ops-bk.sandbox.fynarfin.io"
