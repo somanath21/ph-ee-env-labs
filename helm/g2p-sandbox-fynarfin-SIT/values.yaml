@@ -204,6 +204,12 @@ ph-ee-engine:
     ams_local_customer_host: "https://fynams.sandbox.fynarfin.io/"
     ams_local_auth_host: "https://fynams.sandbox.fynarfin.io/"
     ams_local_loan_host : "https://fynams.sandbox.mifos.io/"
+    extraEnvs: 
+    - name: "ELASTICSEARCH_USERNAME"
+      valueFrom:
+        secretKeyRef:
+          name: elasticsearch-master-credentials
+          key: username
     ingress:
       enabled: true
       annotations: 
