@@ -1,0 +1,99 @@
+version: 2.1
+orbs:
+  slack: circleci/slack@4.12.5
+  helm: circleci/helm@2.0.1
+  aws-eks: circleci/aws-eks@2.2.0
+  kubernetes: circleci/kubernetes@1.3
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.10
+    working_directory: ~/repo
+    environment:
+      TERM: dumb
+    steps:
+      - checkout
+      - run: rm -f helm/g2p-sandbox-fynarfin-SIT/Chart.lock helm/g2p-sandbox-fynarfin-SIT/requirements.lock helm/g2p-sandbox-fynarfin-SIT/charts/*
+      - helm/install-helm-client:
+          version: "v3.8.2"
+      # - run: "sed -i '12s/.*/version: 0.0.0/' helm/g2p-sandbox-fynarfin-SIT/Chart.yaml"
+      - run: cat helm/g2p-sandbox-fynarfin-SIT/Chart.yaml
+      - run: helm dep up helm/g2p-sandbox-fynarfin-SIT
+      - run: helm package helm/g2p-sandbox-fynarfin-SIT
+      - run: helm repo index .
+      - run: echo "$CERT_FILE" | base64 --decode > b64encoded.pem
+      - run: chmod 400 b64encoded.pem
+      - run: scp -o StrictHostKeyChecking=No -i b64encoded.pem index.yaml ph-ee-g2psandbox-fynarfin-0.2.0.tgz ec2-user@13.233.68.128:~/
+      - run: ssh -i b64encoded.pem -o StrictHostKeyChecking=No ec2-user@13.233.68.128 sudo mv -t /apps/apache-tomcat-7.0.82/webapps/ROOT/images/ph-ee-g2psandbox-fynarfin index.yaml ph-ee-g2psandbox-fynarfin-0.2.0.tgz
+  upgrade-helm-chart:
+    docker:
+      - image: cimg/python:3.10
+    parameters:
+      cluster-name:
+        description: "sit"
+        type: string
+    steps:
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: "sit"
+          aws-region: "us-east-2"
+      - helm/install-helm-client:
+          version: "v3.8.2"
+      - run: helm ls --namespace=paymenthub
+      - helm/upgrade-helm-chart:
+          chart: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin/ph-ee-g2psandbox-fynarfin-0.2.0.tgz"
+          release-name: "g2p-sandbox"
+          namespace: paymenthub
+          recreate-pods: true
+          add-repo: "https://fynarfin.io/images/ph-ee-g2psandbox-fynarfin"
+          wait: true
+          timeout: "300s"
+      # - run: helm test g2p-sandbox --namespace=paymenthub 
+            # reset-values: true
+            # dry-run: true
+      # - helm/install-helm-chart:
+      #     add-repo: "https://fynarfin.io/images/"
+      #     chart: "https://fynarfin.io/images/ph-ee-g2psandbox-0.2.0.tgz"
+      #     release-name: g2p-sandbox
+      #     namespace: ph-test
+
+      # kubectl delete secrets elastic-certificates elastic-certificate-pem elastic-certificate-crt|| true
+  test-chart:
+    docker:
+      - image: cimg/openjdk:17.0.0
+    steps:
+      - run: git clone https://github.com/openmf/ph-ee-integration-test
+      - run: cd ph-ee-integration-test && ./gradlew test -Dcucumber.filter.tags="@gov" 
+      - store_test_results:
+          path: ph-ee-integration-test/build/test-results/test/TEST-org.mifos.integrationtest.TestRunner.xml
+workflows:
+  deploy:
+    jobs:
+      - build:
+          context: 
+            - AWS
+            - Helm
+            - slack
+      - upgrade-helm-chart:
+          cluster-name: sit
+          requires:
+            - build
+          context:
+            - AWS
+            - Helm
+            - slack
+            - Secrets
+      - test-chart:
+          requires:
+            - upgrade-helm-chart
+          context: 
+            - AWS
+            - Helm
+            - slack
+      # - install-helm-chart:
+      #     cluster-name: sit
+      # - delete-helm-release:
+      #     cluster-name: sit
+      #     requires:
+      #       - install-helm-chart
+  
+      
