@@ -57,6 +57,29 @@ jobs:
       #     namespace: ph-test
 
       # kubectl delete secrets elastic-certificates elastic-certificate-pem elastic-certificate-crt|| true
+  upgrade-fineract-helm-chart:
+    docker:
+      - image: cimg/python:3.10
+    parameters:
+      cluster-name:
+        description: "sit"
+        type: string        
+    steps:
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: "sit"
+          aws-region: "us-east-2"
+      - helm/install-helm-client:
+          version: "v3.8.2"
+      - run: helm ls --namespace=fineract
+      - helm/upgrade-helm-chart:
+          chart: "https://fynarfin.io/images/fineract/fin-engine-1.1.0-SNAPSHOT.tgz"
+          release-name: "fineract"
+          namespace: fineract
+          recreate-pods: true
+          add-repo: "https://fynarfin.io/images/fineract"
+          wait: true
+          timeout: "300s"
+
   test-chart:
     docker:
       - image: cimg/openjdk:17.0.0
@@ -74,6 +97,15 @@ workflows:
             - Helm
             - slack
       - upgrade-helm-chart:
+          cluster-name: sit
+          requires:
+            - build
+          context:
+            - AWS
+            - Helm
+            - slack
+            - Secrets
+      - upgrade-fineract-helm-chart:
           cluster-name: sit
           requires:
             - build
